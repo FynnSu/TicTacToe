@@ -26,6 +26,7 @@ public class TestGame implements ActionListener{
 			quit = new JButton("Quit");
 	
 	JButton[] buttons = new JButton[9];
+	//coment
 	JLabel player = new JLabel("  X goes first"),
 			winner = new JLabel(" "),
 			score = new JLabel(" ");
