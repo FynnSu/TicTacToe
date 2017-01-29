@@ -11,6 +11,8 @@ package main;
  */
 public class Game {
 	
+	private moveListener listener;
+	
 	int[][] board;
 	private int current;
 	private int moves;
@@ -21,10 +23,15 @@ public class Game {
 		moves = 0;
 	}
 	
+	public void setListener(moveListener listener) {
+		this.listener = listener;
+	}
+	
 	public int move(int col, int row) {
 		if (board[col][row] != 0)
 			return 5;
 		board[col][row] = current;
+		listener.moveMade(col, row);
 		moves++;
 		switchCurrent();
 		return (moves < 5) ? 0 : checkWin();

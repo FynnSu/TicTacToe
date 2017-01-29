@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
-public class Computer {
+public class Computer implements moveListener{
 	
 	int[][] board;
 	int[] configs;
@@ -84,27 +84,27 @@ public class Computer {
 	}
 	
 	public void makeMove() {
-		int bestX = 0, bestY = 0, bestLossValue = Integer.MAX_VALUE, bestWinValue = 0;
+		int bestCol = 0, bestRow = 0, bestLossValue = Integer.MAX_VALUE, bestWinValue = 0;
 		for (int col = 0; col < 3; col++) {
 			for (int row = 0; row < 3; row++) {
 				if (board[col][row] == 0){
 					int index = getBoardValue(col,row);
 					if (previousLosses[index] < bestLossValue){
 						bestLossValue = previousLosses[index];
-						bestX = col;
-						bestY = row;
+						bestCol = col;
+						bestRow = row;
 						bestWinValue = previousWins[index];
 					} else if (previousLosses[index] == bestLossValue && previousWins[index] > bestWinValue) {
-						bestX = col;
-						bestY = row;
+						bestCol = col;
+						bestRow = row;
 						bestWinValue = previousWins[index];
 					}
 				}
 					
 			}
 		}
-		board[bestX][bestY] = 1;
-		game.move(bestX, bestY);
+		board[bestCol][bestRow] = 1;
+		game.move(bestCol, bestRow);
 		checkWin();
 	}
 	
@@ -123,9 +123,9 @@ public class Computer {
 	
 	public void setBoardValue() {
 		int index = 0;
-		for (int y = 0; y < 3; y++) {
-			for (int x = 0; x < 3; x++) {
-				index += board[x][y]* Math.pow(3, 8-(3 * y + x));
+		for (int row = 0; row < 3; row++) {
+			for (int col = 0; col < 3; col++) {
+				index += board[col][row]* Math.pow(3, 8-(3 * row + col));
 			}
 		}
 		
@@ -141,17 +141,22 @@ public class Computer {
 	 * @param x
 	 * @param y
 	 */
-	public int getBoardValue(int x, int y) {
-		int index = 3 * y + x;
+	public int getBoardValue(int col, int row) {
+		int index = 3 * row + col;
 		
 		int value = 0;
-		for (int yLoc = 0; yLoc < 3; yLoc++) {
-			for (int xLoc = 0; xLoc < 3; xLoc++) {
-				value += board[xLoc][yLoc]* Math.pow(3, 8-(3 * yLoc + xLoc));
+		for (int rowLoc = 0; rowLoc < 3; rowLoc++) {
+			for (int colLoc = 0; colLoc < 3; colLoc++) {
+				value += board[colLoc][rowLoc]* Math.pow(3, 8-(3 * rowLoc + colLoc));
 			}
 		}
 		value += Math.pow(3, 8-index);
 		return value;
+	}
+
+	@Override
+	public void moveMade(int col, int row) {
+		addMove(col, row);
 	}
 	
 	
