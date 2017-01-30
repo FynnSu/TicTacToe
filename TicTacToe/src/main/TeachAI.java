@@ -11,35 +11,47 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 /**
- * TestGame Class for playing against Computer AI
- * Uses Game class for tttGame control
- * Provides simple user interface for easier playing
+ * Class used for Training AI
+ * Repeatedly plays computer against itself
  * @author Fynn
  *
  */
-public class TestGame implements ActionListener{
+public class TeachAI implements ActionListener{
 	
-	Game game;
-	Computer AI;
+	static int[][] board;
 	JButton[] buttons;
-	boolean userTurn = true;
+	Computer AI1;
+	Computer AI2;
+	int result = 1;
+	boolean compOne;
+	Game game;
 	
 	/**
-	 * Initializes game
-	 * @param args
+	 * Creates new instance of TeachAI()
+	 * Initializes computers and board
+	 * Calls setUp()
 	 */
-	public static void main(String[] args) {
-		new TestGame();
+	public TeachAI() {
+		AI1 = new Computer(1);
+		AI2 = new Computer(2);
+		board = new int[3][3];
+		setUp();
 	}
 	
 	/**
-	 * Creates new Game instance and runs it
-	 * initializes computer with version 2
-	 * Creates UI
-	 * sets game to computer
+	 * Starts game
+	 * Creates new TeachAI() instance
+	 * @param args
 	 */
-	public TestGame() {
-		AI = new Computer(2);
+	public static void main(String[] args) {
+		new TeachAI();
+	}
+	
+	/**
+	 * Sets up the user interface
+	 * displays UI
+	 */
+	public void setUp() {
 		
 		JFrame frame = new JFrame("Tic Tac Toe");
 		JPanel contentPane = new JPanel();
@@ -60,15 +72,11 @@ public class TestGame implements ActionListener{
 		frame.setContentPane(contentPane);
 		frame.pack();
 		frame.setVisible(true);
-		
-		game = new Game();
-		AI.setGame(game);
 	}
 	
-	
 	/**
-	 * Displays the inputed tttBoard on UI buttons
-	 * @param tttBoard current board
+	 * Displays current board on UI
+	 * @param tttBoard current config
 	 */
 	public void displayBoard(int[][] tttBoard) {
 		for (int col = 0; col < 3; col++) {
@@ -81,51 +89,50 @@ public class TestGame implements ActionListener{
 
 	/**
 	 * Called on action (click)
-	 * Resets game if game is finished and prints out result
-	 * Otherwise enters user move or comp move dependent on userTurn
-	 * switches userTurn
+	 * Allows move by move viewing of Computer games or can be looped 
+	 * for continuous moves
+	 * resets game when game finished
+	 * makes correct computer move
+	 * switches computer
+	 * prints out game results
 	 * calls displayBoard()
 	 */
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		int result = game.checkWin();
+		while(true) {
 		if (result != 0) {
-			reset();
-			displayBoard(game.board);
-			userTurn = true;
-			if (result == 1) {
-				System.out.println("Player One Won!  ***");
-			} else if (result == -1) {
-				System.out.println("Comp Two Won!      ***");
-			} else if (result == 4) {
-				System.out.println("It was a Tie!          ***");
-			}
+			game = new Game();
+			AI1.reset();
+			AI2.reset();
+			AI1.setGame(game);
+			AI2.setGame(game);
+			compOne = true;
+		}
+		if (compOne) {
+			AI1.makeMove();
 		} else {
-			if (userTurn) {
-			int value = Integer.parseInt(e.getActionCommand());
-			int col = value % 3;
-			int row = value / 3;
-			
-			game.move(1, col, row);
-			} else {
-				AI.makeMove();
-			}
-			userTurn = !userTurn;
-			displayBoard(game.board);
+			AI2.makeMove();
+		}
+		compOne = !compOne;
+		result = game.checkWin();
+		if (result == 1) {
+			System.out.println("Comp One Won!  ***");
+		} else if (result == -1) {
+			System.out.println("Comp Two Won!      ***");
+		} else if (result == 4) {
+			System.out.println("It was a Tie!          ***");
+		}
+		displayBoard(game.board);
 		}
 	}
 	
 	/**
-	 * Resets game
-	 * clears UI
-	 * Initializes new game and set AI to it
+	 * Resets UI
 	 */
 	public void reset() {
 		for (JButton b : buttons) {
 			b.setText("0");
 		}
-		game = new Game();
-		AI.setGame(game);
 	}
 
 }
