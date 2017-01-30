@@ -12,13 +12,15 @@ public class Computer implements moveListener{
 	int[] configs;
 	int[] previousLosses;
 	int[] previousWins;
+	int version;
 	Game game;
 	ObjectInputStream oisWins;
 	ObjectOutputStream oosWins;
 	ObjectInputStream oisLosses;
 	ObjectOutputStream oosLosses;
 
-	public Computer() {
+	public Computer(int version) {
+		this.version = version;
 		board = new int[3][3];
 		configs = new int[9];
 		previousLosses = new int[19683];
@@ -33,8 +35,8 @@ public class Computer implements moveListener{
 	
 	public void write() {
 		try {
-			oosWins = new ObjectOutputStream(new FileOutputStream("ticTacToeWins.dat"));
-			oosLosses = new ObjectOutputStream(new FileOutputStream("ticTacToeLosses.dat"));
+			oosWins = new ObjectOutputStream(new FileOutputStream("ticTacToeWins" + Integer.toString(version) + ".dat"));
+			oosLosses = new ObjectOutputStream(new FileOutputStream("ticTacToeLosses" + Integer.toString(version) + ".dat"));
 		} catch (IOException e) {
 				System.out.println(e.getMessage());
 		} 
@@ -51,8 +53,8 @@ public class Computer implements moveListener{
 	
 	public void read() {
 		try {
-			oisWins = new ObjectInputStream(new FileInputStream("ticTacToeWins.dat"));
-			oisLosses = new ObjectInputStream(new FileInputStream("ticTacToeLosses.dat"));
+			oisWins = new ObjectInputStream(new FileInputStream("ticTacToeWins" + Integer.toString(version) + ".dat"));
+			oisLosses = new ObjectInputStream(new FileInputStream("ticTacToeLosses" + Integer.toString(version) + ".dat"));
 		} catch (IOException e) {
 			System.out.println(e.getMessage());
 		}
@@ -66,6 +68,11 @@ public class Computer implements moveListener{
 	
 	public void setGame(Game newGame) {
 		game = newGame;
+		if (version == 1) {
+			game.setListenerOne(this);
+		} else {
+			game.setListenerTwo(this);
+		}
 		configs = new int[9];
 	}
 	
@@ -79,7 +86,11 @@ public class Computer implements moveListener{
 		int result = game.checkWin();
 		if (result == 0)
 			return;
-		setWinLoss(result != 1);
+		if (version == 1) {
+			setWinLoss(result == 1);
+		} else if (version == 2) {
+			setWinLoss(result == -1);
+		}
 		reset();
 	}
 	
@@ -104,18 +115,19 @@ public class Computer implements moveListener{
 			}
 		}
 		board[bestCol][bestRow] = 1;
-		game.move(bestCol, bestRow);
+		game.move(version, bestCol, bestRow);
+		setBoardValue();
 		checkWin();
 	}
 	
 	public void setWinLoss(boolean result) {
 		if (result) { //computer win
 			for (int i = 0; i < 9; i++) {
-				previousWins[configs[1]]++;
+				previousWins[configs[i]]++;
 			}
 		} else {
 			for (int i = 0; i < 9; i++) {
-				previousLosses[configs[1]]++;
+				previousLosses[configs[i]]++;
 			}
 		}
 		write();
@@ -133,7 +145,6 @@ public class Computer implements moveListener{
 		while (current < 9 && configs[current] != 0) 
 			current++;
 		configs[current] = index;
-		System.out.println(index);
 	}
 	
 	/**

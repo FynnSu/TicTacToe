@@ -11,7 +11,7 @@ package main;
  */
 public class Game {
 	
-	private moveListener listener;
+	private moveListener listenerOne, listenerTwo;
 	
 	int[][] board;
 	private int current;
@@ -23,18 +23,22 @@ public class Game {
 		moves = 0;
 	}
 	
-	public void setListener(moveListener listener) {
-		this.listener = listener;
+	public void setListenerOne(moveListener listener) {
+		this.listenerOne = listener;
 	}
 	
-	public int move(int col, int row) {
-		if (board[col][row] != 0)
-			return 5;
+	public void setListenerTwo(moveListener listener) {
+		this.listenerTwo = listener;
+	}
+	
+	public void move(int comp, int col, int row) {
 		board[col][row] = current;
-		listener.moveMade(col, row);
+		if (comp == 1)
+			listenerTwo.moveMade(col, row);
+//		if (comp == 2) 
+//			listenerOne.moveMade(col, row);
 		moves++;
-		switchCurrent();
-		return (moves < 5) ? 0 : checkWin();
+		switchCurrent();;
 	}
 
 	
