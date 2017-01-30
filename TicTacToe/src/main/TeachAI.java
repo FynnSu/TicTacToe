@@ -10,6 +10,12 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+/**
+ * Class used for Training AI
+ * Repeatedly plays computer against itself
+ * @author Fynn
+ *
+ */
 public class TeachAI implements ActionListener{
 	
 	static int[][] board;
@@ -20,6 +26,11 @@ public class TeachAI implements ActionListener{
 	boolean compOne;
 	Game game;
 	
+	/**
+	 * Creates new instance of TeachAI()
+	 * Initializes computers and board
+	 * Calls setUp()
+	 */
 	public TeachAI() {
 		AI1 = new Computer(1);
 		AI2 = new Computer(2);
@@ -27,10 +38,19 @@ public class TeachAI implements ActionListener{
 		setUp();
 	}
 	
+	/**
+	 * Starts game
+	 * Creates new TeachAI() instance
+	 * @param args
+	 */
 	public static void main(String[] args) {
 		new TeachAI();
 	}
 	
+	/**
+	 * Sets up the user interface
+	 * displays UI
+	 */
 	public void setUp() {
 		
 		JFrame frame = new JFrame("Tic Tac Toe");
@@ -54,7 +74,10 @@ public class TeachAI implements ActionListener{
 		frame.setVisible(true);
 	}
 	
-	
+	/**
+	 * Displays current board on UI
+	 * @param tttBoard current config
+	 */
 	public void displayBoard(int[][] tttBoard) {
 		for (int col = 0; col < 3; col++) {
 			for (int row = 0; row < 3; row++) {
@@ -64,8 +87,19 @@ public class TeachAI implements ActionListener{
 	}
 
 
+	/**
+	 * Called on action (click)
+	 * Allows move by move viewing of Computer games or can be looped 
+	 * for continuous moves
+	 * resets game when game finished
+	 * makes correct computer move
+	 * switches computer
+	 * prints out game results
+	 * calls displayBoard()
+	 */
 	@Override
 	public void actionPerformed(ActionEvent e) {
+		while(true) {
 		if (result != 0) {
 			game = new Game();
 			AI1.reset();
@@ -82,15 +116,19 @@ public class TeachAI implements ActionListener{
 		compOne = !compOne;
 		result = game.checkWin();
 		if (result == 1) {
-			System.out.println("Comp One Won!        ***");
+			System.out.println("Comp One Won!  ***");
 		} else if (result == -1) {
-			System.out.println("Comp Two Won!");
+			System.out.println("Comp Two Won!      ***");
 		} else if (result == 4) {
-			System.out.println("It was a Tie!");
+			System.out.println("It was a Tie!          ***");
 		}
 		displayBoard(game.board);
+		}
 	}
 	
+	/**
+	 * Resets UI
+	 */
 	public void reset() {
 		for (JButton b : buttons) {
 			b.setText("0");

@@ -10,16 +10,34 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+/**
+ * TestGame Class for playing against Computer AI
+ * Uses Game class for tttGame control
+ * Provides simple user interface for easier playing
+ * @author Fynn
+ *
+ */
 public class TestGame implements ActionListener{
 	
 	Game game;
 	Computer AI;
 	JButton[] buttons;
 	boolean userTurn = true;
+	
+	/**
+	 * Initializes game
+	 * @param args
+	 */
 	public static void main(String[] args) {
 		new TestGame();
 	}
 	
+	/**
+	 * Creates new Game instance and runs it
+	 * initializes computer with version 2
+	 * Creates UI
+	 * sets game to computer
+	 */
 	public TestGame() {
 		AI = new Computer(2);
 		
@@ -48,6 +66,10 @@ public class TestGame implements ActionListener{
 	}
 	
 	
+	/**
+	 * Displays the inputed tttBoard on UI buttons
+	 * @param tttBoard current board
+	 */
 	public void displayBoard(int[][] tttBoard) {
 		for (int col = 0; col < 3; col++) {
 			for (int row = 0; row < 3; row++) {
@@ -57,6 +79,13 @@ public class TestGame implements ActionListener{
 	}
 
 
+	/**
+	 * Called on action (click)
+	 * Resets game if game is finished and prints out result
+	 * Otherwise enters user move or comp move dependent on userTurn
+	 * switches userTurn
+	 * calls displayBoard()
+	 */
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		int result = game.checkWin();
@@ -65,11 +94,11 @@ public class TestGame implements ActionListener{
 			displayBoard(game.board);
 			userTurn = true;
 			if (result == 1) {
-				System.out.println("Comp One Won!        ***");
+				System.out.println("Player One Won!  ***");
 			} else if (result == -1) {
-				System.out.println("Comp Two Won!");
+				System.out.println("Comp Two Won!      ***");
 			} else if (result == 4) {
-				System.out.println("It was a Tie!");
+				System.out.println("It was a Tie!          ***");
 			}
 		} else {
 			if (userTurn) {
@@ -86,12 +115,16 @@ public class TestGame implements ActionListener{
 		}
 	}
 	
+	/**
+	 * Resets game
+	 * clears UI
+	 * Initializes new game and set AI to it
+	 */
 	public void reset() {
 		for (JButton b : buttons) {
 			b.setText("0");
 		}
 		game = new Game();
-		AI.reset();
 		AI.setGame(game);
 	}
 
